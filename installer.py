@@ -1,6 +1,7 @@
 import os
 from logging import error, info, warning
 from os.path import expanduser
+import shutil
 from config import Config 
 from command import Command
 
@@ -120,7 +121,7 @@ class Installer:
 
     def empty_config(self):
         try:
-            os.rmdir(expanduser("~/.config"))
+            shutil.rmtree(expanduser("~/.config"))
         except FileNotFoundError:
             os.mkdir(expanduser("~/.config"))
             info("Config was cleaned [OK]")
@@ -131,7 +132,7 @@ class Installer:
     def stow_grub(self):
         grub_path = "/etc/default/grub"
         if os.path.exists(grub_path):
-            os.remove(grub_path)
+            shutil.rmtree(grub_path)
         os.symlink(expanduser("~/dotfiles/.config/grub/grub"), grub_path)
 
     def update_grub_config(self):
