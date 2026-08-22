@@ -49,7 +49,7 @@ class Installer:
         os.chdir(expanduser("~/.cache"))
 
     def remove_aur_cache(self):
-        os.rmdir(expanduser(f"~/.cache/{self.config.aur}"))
+        shutil.rmtree(expanduser(f"~/.cache/{self.config.aur}"))
 
     def install_deps(self):
         info("Installing dependencies...")
