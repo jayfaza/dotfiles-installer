@@ -60,6 +60,7 @@ class Installer:
             error("FAILED to install deps [ERR]")
 
     def install_aur(self):
+        self.create_cache_dir()
         self.cd_to_cache_dir()
         info(f"Installing {self.config.aur}")
         Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git").execute()
