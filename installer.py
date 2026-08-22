@@ -39,7 +39,10 @@ class Installer:
         os.chdir(expanduser("~"))
 
     def create_cache_dir(self):
-        os.mkdir(expanduser("~/.cache"))
+        try:
+            os.mkdir(expanduser("~/.cache"))
+        except FileExistsError:
+            warning("~/.cache exists. [WARN]") 
 
     def cd_to_cache_dir(self):
         os.chdir(expanduser("~/.cache"))
