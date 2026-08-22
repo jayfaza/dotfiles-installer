@@ -57,7 +57,7 @@ class Config:
             self.input_new_deps()
 
     def set_default_deps(self) -> None:
-        self.deps = ["which", "mkdir", "adw-gtk-theme", "swaybg", "nvim", "nvim", "nwg-look", "fuzzel", "lsd", "stow", "npm", "pipewire", "wireplumber", "rustup", "niri", "kitty", "nautilus", "firefox", "waybar", "mako", "fish", "xdg-desktop-portal", "xdg-desktop-portal-gnome", "xdg-desktop-portal-gtk", "gnome-keyring", "git"]
+        self.deps = ["which", "adw-gtk-theme", "swaybg", "nvim", "nvim", "nwg-look", "fuzzel", "lsd", "stow", "npm", "pipewire", "wireplumber", "rustup", "niri", "kitty", "nautilus", "firefox", "waybar", "mako", "fish", "xdg-desktop-portal", "xdg-desktop-portal-gnome", "xdg-desktop-portal-gtk", "gnome-keyring", "git"]
 
     def choose_aur_man(self) -> None:
         if self.is_aur():
