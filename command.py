@@ -18,7 +18,7 @@ class Command:
         return self
     
     def execute(self) -> None:
-        self.unwrap(subprocess.run(self.cmd))
+        self.unwrap(self.execute_output())
 
     def execute_output(self) -> CompletedProcess[bytes]:
         return subprocess.run(self.cmd)
