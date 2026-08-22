@@ -132,7 +132,8 @@ class Installer:
     def stow_grub(self):
         grub_path = "/etc/default/grub"
         if os.path.exists(grub_path):
-            shutil.rmtree(grub_path)
+            os.chmod(grub_path, 0o777)
+            os.remove(grub_path)
         os.symlink(expanduser("~/dotfiles/.config/grub/grub"), grub_path)
 
     def update_grub_config(self):
