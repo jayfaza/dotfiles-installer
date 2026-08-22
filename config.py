@@ -17,7 +17,7 @@ class Config:
 
     def get_setup_type(self) -> None:
         print("Desktop - D, Laptop - l")
-        setup_type = input("Your setup type? [D/l]: ")
+        setup_type = input("Your setup type? [D/l]: ").lower()
         self.match_setup_type(setup_type)
 
     def match_setup_type(self, setup_type: str) -> None:
