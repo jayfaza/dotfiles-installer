@@ -92,6 +92,7 @@ class ConfigStower:
         for entry in firefox_entry:
             if entry.endswith("release"):
                 firefox_config = f"{firefox_dir}{entry}/prefs.js"
+                self.sysman.rmfile(firefox_config)
                 prGreen(f"Found firefox profile: {firefox_config}")
         
         if firefox_config:
