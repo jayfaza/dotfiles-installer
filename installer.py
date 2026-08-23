@@ -23,6 +23,8 @@ class Installer:
         self.config_stower.stow()
         self.garbage_cleaner.clear_garbage()
 
+        prGreen(f"\nEverything has been updated!")
+
     def install(self):
         self.install_deps()
         self.install_dotfiles()
@@ -59,7 +61,7 @@ class Installer:
         cmd.execute()
 
     def install_deps(self):
-        prCyan(f"Installing dotfiles dependencies\n\n{self.config.deps}")
+        prCyan(f"Installing dotfiles dependencies\n\n{self.config.deps}\n")
         deps_cmd = Command("sudo pacman -S", capture_output=self.quiet).expand_by(self.config.deps)
         if self.config.setup_type == "laptop":
             prYellow(f"Installing 'tlp' 'tlp-pd' packages for laptop setup...")
