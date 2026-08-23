@@ -53,6 +53,6 @@ class SystemManager:
         try:
             os.symlink(src, dst)
         except: 
-            Command(f"sudo ln -s {src} {dst}").execute()
+            Command(f"sudo ln -sf {src} {dst}").execute()
 
 
