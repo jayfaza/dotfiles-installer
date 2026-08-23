@@ -40,6 +40,7 @@ class ConfigStower:
         
         if os.path.exists(self.config):
             self.sysman.clear_dir(self.config)
+            self.firefox_default = self.define_firefox_profile()
         else:
             self.sysman.mkdir(self.config)
 
@@ -52,7 +53,6 @@ class ConfigStower:
         if os.path.exists(self.grub_default):
             self.sysman.rmfile(self.grub_default)
 
-        self.firefox_default = self.define_firefox_profile()
 
     def stow_grub(self):
         prYellow("Stowing grub config")
