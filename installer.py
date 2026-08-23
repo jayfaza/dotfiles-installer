@@ -39,10 +39,11 @@ class Installer:
     def install_dotfiles(self):
         prCyan("Downloading jayfaza's dotfiles...")
         if os.path.exists(expanduser("~/dotfiles")):
+
             prYellow("~/dotfiles folder is already exists!")
             prYellow("Updating dotfiles repository...")
             self.sysman.cd("~/dotfiles/")
-            Command("git pull", capture_output=self.quiet).execute()
+            Command("git pull --force", capture_output=self.quiet).execute()
             return
 
 
