@@ -61,6 +61,8 @@ class ConfigStower:
     def stow_xdg(self):
         prCyan("Stowing xdg config...")
 
+        Command("systemctl --user stop --now xdg-desktop-portal").execute()
+        self.sysman.rmfile(self.xdg_default)
         self.sysman.symlink(self.xdg_config, self.xdg_default, force=True)
 
     def stow_tlp(self):
