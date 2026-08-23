@@ -26,6 +26,8 @@ class Installer:
 
         prGreen(f"\nEverything has been updated!")
 
+        self.reload_fish()
+
     def install(self):
         if self.update:
             self.update_everything()
@@ -41,12 +43,13 @@ class Installer:
         self.tweaker.tweak_all()
 
         prGreen(f"\nEverything has been prepared and installed.\n Welcome back!")
+        self.reload_fish()
         
     def install_dotfiles(self):
         prCyan("Downloading jayfaza's dotfiles...")
         if os.path.exists(expanduser("~/dotfiles")):
 
-            prYellow("~/dotfiles folder is already exists!")
+            prYellow("~/dotfiles repository already exists!")
             prYellow("Updating dotfiles repository...")
             self.update_dotfiles()
             self.sysman.cd("~/dotfiles")
@@ -123,4 +126,6 @@ class Installer:
         self.sysman.rmdir("~/dotfiles")
         Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.quiet).execute()
         
+    def reload_fish(self):
+        Command("exec fish").execute()
 
