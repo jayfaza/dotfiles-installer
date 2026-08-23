@@ -1,6 +1,6 @@
 import os
-from logging import error, info, warning
 from os.path import expanduser
+from printer import prCyan, prGreen, prYellow
 from system_manager import SystemManager
 from config import Config 
 from command import Command
@@ -11,10 +11,17 @@ from garbage_cleaner import GarbageCleaner
 class Installer:
     def __init__(self, config: Config):
         self.config: Config = config 
-        self.sysman: SystemManager = SystemManager()
-        self.config_stower: ConfigStower = ConfigStower(config.setup_type)
-        self.tweaker: Tweaker = Tweaker(config.setup_type)
+        self.sysman: SystemManager = SystemManager(config)
+        self.config_stower: ConfigStower = ConfigStower(config)
+        self.tweaker: Tweaker = Tweaker(config)
         self.garbage_cleaner: GarbageCleaner = GarbageCleaner(config)
+        self.quiet: bool = config.quiet 
+
+    def update_all(self):
+        self.update_packages()
+        self.install_dotfiles()
+        self.config_stower.stow_all()
+        self.garbage_cleaner.clear_garbage()
 
     def install(self):
         self.install_deps()
@@ -27,44 +34,52 @@ class Installer:
         self.garbage_cleaner.clear_garbage()
         self.tweaker.tweak_all()
 
-        warning("Everything has been prepared and installed, Welcome back!")
+        prGreen(f"\nEverything has been prepared and installed.\n Welcome back!")
         
     def install_dotfiles(self):
+        prCyan("Downloading jayfaza's dotfiles...")
         if os.path.exists(expanduser("~/dotfiles")):
-            warning("~/dotfiles folder is already exists.")
+            prYellow("~/dotfiles folder is already exists!")
+            prYellow("Updating dotfiles repository...")
             self.sysman.cd("~/dotfiles/")
-            Command("git pull").execute()
+            Command("git pull", capture_output=self.quiet).execute()
             return
+
 
         self.sysman.cd("~")
 
-        Command("git clone https://github.com/jayfaza/dotfiles.git").execute()
+        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.quiet).execute()
 
     def install_cursor_theme(self):
-        Command(f"{self.config.aur} -S bibata-cursor-theme-bin").execute()
+        prCyan("Installing cursor theme...")
+        Command(f"{self.config.aur} -S bibata-cursor-theme-bin", capture_output=self.quiet).execute()
 
     def install_deps(self):
-        deps_cmd = Command("sudo pacman -S").expand_by(self.config.deps)
+        prCyan(f"Installing dotfiles dependencies\n\n{self.config.deps}")
+        deps_cmd = Command("sudo pacman -S", capture_output=self.quiet).expand_by(self.config.deps)
         if self.config.setup_type == "laptop":
+            prYellow(f"Installing 'tlp' 'tlp-pd' packages for laptop setup...")
             deps_cmd = deps_cmd.expand_by(["tlp", "tlp-pd"])
         deps_cmd.execute()
 
     def install_aur(self):
+        prYellow(f"Installing AUR: {self.config.aur}")
+
         self.sysman.mkdir("~/.cache")
         self.sysman.cd("~/.cache")
 
-        info(f"Installing {self.config.aur}")
-
-        Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git").execute()
+        Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.quiet).execute()
 
         self.sysman.cd(f"~/.cache/{self.config.aur}")
 
-        Command("makepkg -si").execute()
+        Command("makepkg -si", capture_output=self.quiet).execute()
 
     def install_aur_deps(self):
-        Command("sudo pacman -S --needed base-devel").execute()
+        prCyan("Installing AUR dependencies...")
+        Command("sudo pacman -S --needed base-devel", capture_output=self.quiet).execute()
 
     def is_some_aur(self) -> bool:
+        
         if self.config.aur:
             if self.config.aur == "paru" or self.config.aur == "yay":
                 return True
@@ -74,4 +89,8 @@ class Installer:
                 return False
         else:
             return False
+
+    def update_packages(self):
+        prCyan("Updating packages...") 
+        Command("sudo pacman -Syu", capture_output=self.quiet).execute()
 

@@ -3,12 +3,16 @@ class Config:
         self.deps: list[str]
         self.setup_type: str
         self.aur: str
+        self.quiet: bool
+        self.update: bool 
     
     def init(self) -> None:
         self.get_setup_type()
         self.set_default_deps()
         self.add_deps()
         self.choose_aur_man()
+        self.quiet = False
+        self.update = False
 
     def init_default(self) -> None:
         self.setup_type = "desktop"

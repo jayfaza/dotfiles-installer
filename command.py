@@ -1,5 +1,5 @@
 import subprocess
-from logging import error, warning
+from logging import error
 from subprocess import CompletedProcess
 from typing import Self
 

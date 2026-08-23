@@ -4,7 +4,12 @@ from os.path import expanduser
 from command import Command
 import shutil
 
+from config import Config
+
 class SystemManager:
+    def __init__(self, config: Config):
+        self.quiet: bool = config.quiet
+
     def cd(self, path: str):
         path = expanduser(path)
 
@@ -23,7 +28,7 @@ class SystemManager:
             try:
                 shutil.rmtree(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}").execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
         else:
             error(f"No directory: {path}") 
         
@@ -34,8 +39,8 @@ class SystemManager:
                 shutil.rmtree(path)
                 os.mkdir(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}").execute()
-                Command(f"sudo mkdir {path}").execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
+                Command(f"sudo mkdir {path}", capture_output=self.quiet).execute()
         else:
             error(f"No directory: {path}")
 
@@ -45,7 +50,7 @@ class SystemManager:
             try:
                 os.remove(path)
             except:
-                Command(f"sudo rm -rf {path}").execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
         else:
             error(f"No file: {path}")
 
@@ -55,7 +60,7 @@ class SystemManager:
             try:
                 os.unlink(path)
             except:
-                Command(f"sudo unlink {path}").execute()
+                Command(f"sudo unlink {path}", capture_output=self.quiet).execute()
         else:
             error(f"Symlink doesn't exist: {path}") 
 
@@ -63,6 +68,6 @@ class SystemManager:
         try:
             os.symlink(src, dst)
         except: 
-            Command(f"sudo ln -sf {src} {dst}").execute()
+            Command(f"sudo ln -sf {src} {dst}", capture_output=self.quiet).execute()
 
 

@@ -1,3 +1,5 @@
+import sys
+
 from parser import Parser
 from config import Config
 from installer import Installer
@@ -10,11 +12,21 @@ class App:
         args = parser.parse_args()
         config = Config()
 
+        config.quiet = args.quiet
+        config.update = args.update
+        
+        if config.update:
+            Installer(config).update_all()
+            sys.exit(0)
+
+
         if args.default:
             config.init_default()
         else:
             config.init()
 
+
         Installer(config).install()
+        sys.exit(0)
 
 

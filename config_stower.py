@@ -1,15 +1,16 @@
-from logging import error
 from os.path import expanduser
-import subprocess
 
 from command import Command
+from config import Config
+from printer import prCyan, prYellow
 from system_manager import SystemManager
 import os
 
 class ConfigStower:
-    def __init__(self, setup: str):
-        self.sysman: SystemManager = SystemManager()
-        self.setup: str = setup
+    def __init__(self, config: Config):
+        self.sysman: SystemManager = SystemManager(config)
+        self.setup: str = config.setup_type
+        self.quiet: bool = config.quiet
         self.home: str = expanduser("~")
         self.bash_profile: str = f"{self.home}/.bash_profile"
         self.config: str = f"{self.home}/.config/"
@@ -47,16 +48,20 @@ class ConfigStower:
             self.sysman.rmfile(self.grub_default)
 
     def stow_grub(self):
+        prYellow("Stowing grub config")
         self.sysman.symlink(self.grub_config, self.grub_default)
 
     def stow_xdg(self):
+        prCyan("Stowing xdg config...")
         self.sysman.symlink(self.xdg_config, self.xdg_default)
 
     def stow_tlp(self):
+        prYellow("Stowing tlp config...")
         self.sysman.symlink(self.tlp_config, self.tlp_default)
 
     def stow_all(self):
-        print(Command("stow .").execute_output())
+        prCyan("Stowing .config configs...")
+        Command("stow .", self.quiet).execute()
         
 
 
