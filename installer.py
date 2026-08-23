@@ -16,8 +16,9 @@ class Installer:
         self.tweaker: Tweaker = Tweaker(config)
         self.garbage_cleaner: GarbageCleaner = GarbageCleaner(config)
         self.quiet: bool = config.quiet 
+        self.update: bool = config.update
 
-    def update_all(self):
+    def update_everything(self):
         self.update_packages()
         self.install_dotfiles()
         self.config_stower.stow()
@@ -26,6 +27,9 @@ class Installer:
         prGreen(f"\nEverything has been updated!")
 
     def install(self):
+        if self.update:
+            self.update_everything()
+            return
         self.install_deps()
         self.install_dotfiles()
         if self.is_some_aur():

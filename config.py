@@ -1,18 +1,24 @@
+from argparse import Namespace
+
+
 class Config:
-    def __init__(self) -> None:   
+    def __init__(self, args: Namespace) -> None:   
         self.deps: list[str]
         self.setup_type: str
         self.aur: str
-        self.quiet: bool
-        self.update: bool 
+        self.quiet: bool = args.quiet
+        self.update: bool = args.update
+        self.default: bool = args.default
     
     def init(self) -> None:
+        if self.default:
+            self.init_default()
+            return
+
         self.get_setup_type()
         self.set_default_deps()
         self.add_deps()
         self.choose_aur_man()
-        self.quiet = False
-        self.update = False
 
     def init_default(self) -> None:
         self.setup_type = "desktop"
