@@ -11,7 +11,7 @@ class Config:
         self.default: bool = args.default
     
     def init(self) -> None:
-        if self.default:
+        if self.default or self.update:
             self.init_default()
             return
 
