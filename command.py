@@ -1,16 +1,12 @@
 import subprocess
-from logging import error
+from logging import error, warning
 from subprocess import CompletedProcess
 from typing import Self
 
 
 class Command:
     def __init__(self, cmd: str) -> None:
-        self.cmd: list[str]
-        self.init(cmd)
-
-    def init(self, cmd: str) -> None:
-        self.cmd = cmd.split()
+        self.cmd: list[str] = cmd.split()
 
     def expand_by(self, other_cmd: list[str]) -> Self:
         for arg in other_cmd:
@@ -25,8 +21,7 @@ class Command:
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
         if proc.returncode == 1:
-            error(f"Process ouput: {proc.stdout}")
-            error("STOWING IMPOSSIBLE ERROR ABORT!")
+            warning(f"Process breaked down: {proc.stdout}")
         else:
             return
 

@@ -56,11 +56,7 @@ class ConfigStower:
         self.sysman.symlink(self.tlp_config, self.tlp_default)
 
     def stow_all(self):
-        output = subprocess.run(["stow ."]).stderr.decode()
-
-        print(f"Stowing ouput: {output}")
-
-        # Command("stow .").execute()
+        Command("stow .").execute()
         
 
 
