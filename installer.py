@@ -42,8 +42,8 @@ class Installer:
 
             prYellow("~/dotfiles folder is already exists!")
             prYellow("Updating dotfiles repository...")
-            self.sysman.cd("~/dotfiles/")
-            Command("git commit -m 'Update' && git pull", capture_output=self.quiet).execute()
+            self.update_dotfiles()
+            self.sysman.cd("~/dotfiles")
             return
 
 
@@ -53,7 +53,10 @@ class Installer:
 
     def install_cursor_theme(self):
         prCyan("Installing cursor theme...")
-        Command(f"{self.config.aur} -S bibata-cursor-theme-bin", capture_output=self.quiet).execute()
+        cmd = Command(f"{self.config.aur} -S bibata-cursor-theme-bin", capture_output=self.quiet)
+        if self.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        cmd.execute()
 
     def install_deps(self):
         prCyan(f"Installing dotfiles dependencies\n\n{self.config.deps}")
@@ -69,15 +72,27 @@ class Installer:
         self.sysman.mkdir("~/.cache")
         self.sysman.cd("~/.cache")
 
-        Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.quiet).execute()
+        cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.quiet)
+
+        if self.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        
+        cmd.execute()
 
         self.sysman.cd(f"~/.cache/{self.config.aur}")
 
-        Command("makepkg -si", capture_output=self.quiet).execute()
+        cmd = Command("makepkg -si", capture_output=self.quiet)
+        if self.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+
+        cmd.execute()
 
     def install_aur_deps(self):
         prCyan("Installing AUR dependencies...")
-        Command("sudo pacman -S --needed base-devel", capture_output=self.quiet).execute()
+        cmd = Command(f"sudo pacman -S --needed base-devel", capture_output=self.quiet)
+        if self.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        cmd.execute()
 
     def is_some_aur(self) -> bool:
         
@@ -93,5 +108,14 @@ class Installer:
 
     def update_packages(self):
         prCyan("Updating packages...") 
-        Command("sudo pacman -Syu", capture_output=self.quiet).execute()
+        cmd = Command("sudo pacman -Syu", capture_output=self.quiet)
+        if self.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        cmd.execute()
+
+    def update_dotfiles(self):
+        self.sysman.cd("~")
+        self.sysman.rmdir("~/dotfiles")
+        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.quiet).execute()
+        
 
