@@ -16,6 +16,7 @@ class App:
         config.update = args.update
         
         if config.update:
+            config.setup_type = "desktop"
             Installer(config).update_all()
             sys.exit(0)
 
