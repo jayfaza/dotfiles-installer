@@ -88,12 +88,12 @@ class SystemManager:
             exit(1)
 
 
-    def symlink(self, src: str, dst: str):
+    def symlink(self, src: str, dst: str, force=False):
         try:
             os.symlink(src, dst)
 
         except PermissionError: 
-            Command(f"sudo ln -sf {src} {dst}", capture_output=self.quiet).execute()
+            Command(f"sudo rm -rf {dst} && sudo ln -s {src} {dst}", capture_output=self.quiet).execute()
 
         except FileExistsError:
             prRed(f"Failed to symlink, file already exists: {dst}.")

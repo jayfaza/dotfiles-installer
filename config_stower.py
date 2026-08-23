@@ -56,13 +56,12 @@ class ConfigStower:
 
     def stow_grub(self):
         prYellow("Stowing grub config")
-        self.sysman.symlink(self.grub_config, self.grub_default)
+        self.sysman.symlink(self.grub_config, self.grub_default, force=True)
 
     def stow_xdg(self):
         prCyan("Stowing xdg config...")
-        if os.path.exists(self.xdg_default):
-            self.sysman.rmfile(self.xdg_default)
-        self.sysman.symlink(self.xdg_config, self.xdg_default)
+
+        self.sysman.symlink(self.xdg_config, self.xdg_default, force=True)
 
     def stow_tlp(self):
         prYellow("Stowing tlp config...")
