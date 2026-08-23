@@ -23,7 +23,7 @@ class Installer:
             self.install_aur_deps()
             self.install_aur() 
             self.install_cursor_theme()
-        self.config_stower.stow_all()
+        self.config_stower.stow()
         self.garbage_cleaner.clear_garbage()
         self.tweaker.tweak_all()
 
