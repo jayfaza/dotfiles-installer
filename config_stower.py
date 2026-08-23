@@ -1,8 +1,10 @@
 from os.path import expanduser
+import subprocess
+import time
 
 from command import Command
 from config import Config
-from printer import prCyan, prYellow
+from printer import prCyan, prGreen, prRed, prYellow
 from system_manager import SystemManager
 import os
 
@@ -20,11 +22,14 @@ class ConfigStower:
         self.tlp_config: str = f"{self.home}/dotfiles/.config/tlp/tlp.conf"
         self.xdg_default: str = "/etc/xdg/user-dirs.conf"
         self.xdg_config: str = f"{self.home}/dotfiles/.config/xdg/user-dirs.conf"
+        self.firefox_default: str = self.define_firefox_profile()
+        self.firefox_config: str = f"{self.home}/dotfiles/.config/firefox/prefs.js"
 
     def stow(self):
         self.stow_prepare()
         self.stow_grub()
         self.stow_xdg()
+        self.stow_firefox()
         self.stow_all()
 
         if self.setup == "laptop":
@@ -63,6 +68,34 @@ class ConfigStower:
     def stow_all(self):
         prCyan("Stowing .config configs...")
         Command("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md", self.quiet).execute()
+
+
+    def stow_firefox(self):
+        prCyan(f"Stowing firefox...")
+        self.sysman.symlink(self.firefox_config, self.firefox_default)
+        
+    def define_firefox_profile(self) -> str:
+        firefox_dir = "~/.config/mozilla/firefox/"
+        process = subprocess.Popen(["firefox", "--headless"])
+
+        time.sleep(2)
+        process.kill()
+
+        self.sysman.cd(firefox_dir)
+        firefox_entry = os.listdir(firefox_dir)
+
+        firefox_config = None 
+        for entry in firefox_entry:
+            if entry.endswith("release"):
+                firefox_config = f"{firefox_dir}{entry}"
+                prGreen(f"Found firefox profile: {firefox_config}")
+        
+        if firefox_config:
+            return firefox_config
+        else:
+            prRed(f"Firefox config not found")
+            exit(1)
+
         
 
 
