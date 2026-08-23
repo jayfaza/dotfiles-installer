@@ -16,14 +16,14 @@ class Tweaker:
             self.tweak_tlp()
 
     def tweak_audio(self):
-        output = Command("systemctl --user is-enabled pipewire").execute_output().stdout.decode()
+        output = Command("systemctl --user is-enabled pipewire", capture_output=True).execute_output().stdout.decode()
         if output == "disabled":
             Command("sudo systemctl enable --now pipewire wireplumber").execute()
         else:
             pass
 
     def tweak_xdg_portal(self):
-        output = Command("systemctl --user is-enabled xdg-desktop-portal").execute_output().stdout.decode()
+        output = Command("systemctl --user is-enabled xdg-desktop-portal", capture_output=True).execute_output().stdout.decode()
         
         if output == "disabled":
             Command("sudo systemctl enable --now xdg-desktop-portal").execute()
@@ -31,7 +31,7 @@ class Tweaker:
             pass
 
     def tweak_dm(self):
-        output = Command("systemctl --user is-enabled sddm").execute_output().stdout.decode()
+        output = Command("systemctl --user is-enabled sddm", capture_output=True).execute_output().stdout.decode()
 
         if output == "enabled":
             Command("sudo systemctl disable --now sddm").execute()
@@ -49,7 +49,7 @@ class Tweaker:
         Command("gsettings set org.gnome.desktop.interface color-scheme prefer-dark").execute()
 
     def tweak_tlp(self):
-        output = Command("systemctl --user is-enabled tlp").execute_output().stdout.decode()
+        output = Command("systemctl --user is-enabled tlp", capture_output=True).execute_output().stdout.decode()
 
         if output == "disabled":
             Command("sudo systemctl enable --now tlp tlp-pd").execute()
