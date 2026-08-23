@@ -64,6 +64,9 @@ class Installer:
         if self.config.setup_type == "laptop":
             prYellow(f"Installing 'tlp' 'tlp-pd' packages for laptop setup...")
             deps_cmd = deps_cmd.expand_by(["tlp", "tlp-pd"])
+
+        if self.quiet:
+            deps_cmd = deps_cmd.expand_by(["--noconfirm"])
         deps_cmd.execute()
 
     def install_aur(self):
@@ -73,10 +76,6 @@ class Installer:
         self.sysman.cd("~/.cache")
 
         cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.quiet)
-
-        if self.quiet:
-            cmd = cmd.expand_by(["--noconfirm"])
-        
         cmd.execute()
 
         self.sysman.cd(f"~/.cache/{self.config.aur}")
