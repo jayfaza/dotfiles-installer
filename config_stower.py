@@ -61,7 +61,7 @@ class ConfigStower:
     def stow_xdg(self):
         prCyan("Stowing xdg config...")
         if os.path.exists(self.xdg_default):
-            self.sysman.unlink(self.xdg_default)
+            self.sysman.rmfile(self.xdg_default)
         self.sysman.symlink(self.xdg_config, self.xdg_default)
 
     def stow_tlp(self):
