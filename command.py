@@ -25,9 +25,9 @@ class Command:
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
         if proc.returncode == 1:
-            error(f"Process ouput: {proc.stdout.decode()}")
+            error(f"Process ouput: {proc.stdout}")
+            error("STOWING IMPOSSIBLE ERROR ABORT!")
         else:
-            proc.stdout
             return
 
 
