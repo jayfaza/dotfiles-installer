@@ -1,5 +1,3 @@
-from subprocess import CompletedProcess
-
 from command import Command
 
 class Tweaker:
@@ -18,8 +16,8 @@ class Tweaker:
             self.tweak_tlp()
 
     def tweak_audio(self):
-        output = Command("systemctl --user is-enabled pipewire").execute_output()
-        if output == CompletedProcess("disabled".encode(), returncode=0):
+        output = Command("systemctl --user is-enabled pipewire").execute_output().stdout.decode()
+        if output == "disabled":
             Command("sudo systemctl enable --now pipewire wireplumber").execute()
         else:
             pass
