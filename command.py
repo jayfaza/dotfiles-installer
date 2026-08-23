@@ -15,7 +15,7 @@ class Command:
     def expand_by(self, other_cmd: list[str]) -> Self:
         for arg in other_cmd:
             self.cmd.append(arg)
-        return self
+        return self 
     
     def execute(self) -> None:
         self.unwrap(self.execute_output())

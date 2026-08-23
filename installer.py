@@ -55,8 +55,7 @@ class Installer:
         info("Installing dependencies...")
         deps_cmd = Command("sudo pacman -S").expand_by(self.config.deps)
         if self.config.setup_type == "laptop":
-            deps_cmd.expand_by(["tlp", "tlp-pd"])
-
+            deps_cmd = deps_cmd.expand_by(["tlp", "tlp-pd"])
         try:
             deps_cmd.execute()
             info("Sucsessfuly installed dependencies [OK]")
@@ -143,6 +142,7 @@ class Installer:
         self.tweak_audio()
         self.tweak_xdg_portal()
         self.tweak_dm()
+        self.tweak_rust()
         self.update_grub_config()
         self.set_dark_mode()
         if self.config.setup_type == "laptop":
@@ -153,6 +153,9 @@ class Installer:
             Command("systemctl --user enable --now pipewire").execute()
         if Command("sudo systemctl is-enabled wireplumber").execute_output().stdout == "disabled":
             Command("systemctl --user enable --now wireplumber").execute()
+
+    def tweak_rust(self):
+        Command("rustup component add rustfmt rust-analyzer").execute()
 
     def tweak_xdg_portal(self):
         if Command("sudo systemctl is-enabled xdg-desktop-portal").execute_output().stdout == "disabled":
