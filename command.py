@@ -25,7 +25,7 @@ class Command:
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
         if proc.returncode == 1:
-            error(f"Error with process run: {proc.stderr}")
+            error(f"Process ouput: {proc.stdout.decode()}")
         else:
             proc.stdout
             return
