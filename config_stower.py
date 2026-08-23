@@ -91,7 +91,7 @@ class ConfigStower:
         firefox_config = None 
         for entry in firefox_entry:
             if entry.endswith("release"):
-                firefox_config = f"{firefox_dir}{entry}"
+                firefox_config = f"{firefox_dir}{entry}/prefs.js"
                 prGreen(f"Found firefox profile: {firefox_config}")
         
         if firefox_config:
