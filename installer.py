@@ -68,6 +68,8 @@ class Installer:
         if self.config.aur:
             if self.config.aur == "paru" or self.config.aur == "yay":
                 return True
+            elif self.config.aur == "none":
+                return False
             else:
                 return False
         else:

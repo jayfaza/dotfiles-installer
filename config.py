@@ -70,6 +70,8 @@ class Config:
                     self.aur = "paru"
                 case _:
                     pass
+        else:
+            self.aur = "none"
 
     def is_aur(self) -> bool:
         if input("Would you like to setup AUR manager? [Y/n]: ").lower() == "y":
