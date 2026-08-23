@@ -32,6 +32,8 @@ class Installer:
     def install_dotfiles(self):
         if os.path.exists(expanduser("~/dotfiles")):
             warning("~/dotfiles folder is already exists.")
+            self.sysman.cd("~/dotfiles/")
+            Command("git pull").execute()
             return
 
         self.sysman.cd("~")
