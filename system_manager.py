@@ -49,6 +49,16 @@ class SystemManager:
         else:
             error(f"No file: {path}")
 
+    def unlink(self, path: str):
+        path = expanduser(path)
+        if os.path.exists(path):
+            try:
+                os.unlink(path)
+            except:
+                Command(f"sudo unlink {path}").execute()
+        else:
+            error(f"Symlink doesn't exist: {path}") 
+
     def symlink(self, src: str, dst: str):
         try:
             os.symlink(src, dst)

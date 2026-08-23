@@ -24,10 +24,10 @@ class GarbageCleaner:
 
     def remove_archinstall_conf(self):
         if os.path.exists(self.archinstall_conf):
-            self.sysman.rmdir(self.archinstall_conf)
+            self.sysman.unlink(self.archinstall_conf)
 
     def remove_install_script(self):
         if os.path.exists(self.installscript_file):
-            self.sysman.rmfile(self.installscript_file)
+            self.sysman.unlink(self.installscript_file)
  
 
