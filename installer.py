@@ -20,7 +20,7 @@ class Installer:
     def update_all(self):
         self.update_packages()
         self.install_dotfiles()
-        self.config_stower.stow_all()
+        self.config_stower.stow()
         self.garbage_cleaner.clear_garbage()
 
     def install(self):
@@ -43,7 +43,7 @@ class Installer:
             prYellow("~/dotfiles folder is already exists!")
             prYellow("Updating dotfiles repository...")
             self.sysman.cd("~/dotfiles/")
-            Command("git pull --force", capture_output=self.quiet).execute()
+            Command("git commit -m 'Update' && git pull", capture_output=self.quiet).execute()
             return
 
 
