@@ -90,9 +90,6 @@ class SystemManager:
 
     def symlink(self, src: str, dst: str, force=False):
         try:
-            os.symlink(src, dst)
-
-        except PermissionError: 
             Command(f"sudo rm -rf {dst} && sudo ln -s {src} {dst}", capture_output=self.quiet).execute()
 
         except FileExistsError:
