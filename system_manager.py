@@ -1,3 +1,4 @@
+from csv import Error
 from logging import error
 import os
 from os.path import expanduser
@@ -5,6 +6,7 @@ from command import Command
 import shutil
 
 from config import Config
+from printer import prRed
 
 class SystemManager:
     def __init__(self, config: Config):
@@ -20,7 +22,12 @@ class SystemManager:
 
     def mkdir(self, path: str):
         path = expanduser(path)
-        os.makedirs(path, exist_ok=True)
+        try:
+            os.makedirs(path, exist_ok=True)
+        except PermissionError:
+            Command(f"sudo mkdir -p {path}").execute()
+        except Error as e:
+            prRed(f"Error while creating '{path}':\n{e}")
 
     def rmdir(self, path: str):
         path = expanduser(path)
@@ -29,8 +36,13 @@ class SystemManager:
                 shutil.rmtree(path)
             except PermissionError:
                 Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
+
+            except Error as e:
+                prRed(f"Error while removing dir '{path}':\n{e}")
+                exit(1)
         else:
-            error(f"No directory: {path}") 
+            prRed(f"No directory: {path}") 
+            exit(1)
         
     def clear_dir(self, path: str):
         path = expanduser(path)
@@ -41,33 +53,60 @@ class SystemManager:
             except PermissionError:
                 Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
                 Command(f"sudo mkdir {path}", capture_output=self.quiet).execute()
+            except Error as e:
+                prRed(f"Error while clearing dir '{path}':\n{e}")
+                exit(1)
         else:
-            error(f"No directory: {path}")
+            prRed(f"No directory: {path}")
+            exit(1)
 
     def rmfile(self, path: str):
         path = expanduser(path)
         if os.path.exists(path):
             try:
                 os.remove(path)
-            except:
+            except PermissionError:
                 Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
+            except Error as e:
+                prRed(f"Error while removing file '{path}':\n{e}")
         else:
-            error(f"No file: {path}")
+            prRed(f"No file: {path}")
+            exit(1)
 
     def unlink(self, path: str):
         path = expanduser(path)
         if os.path.exists(path):
             try:
                 os.unlink(path)
-            except:
+            except PermissionError:
                 Command(f"sudo unlink {path}", capture_output=self.quiet).execute()
+            except Error as e:
+                prRed(f"Error while unlinking '{path}':\n{e}")
+                exit(1)
         else:
-            error(f"Symlink doesn't exist: {path}") 
+            prRed(f"Symlink doesn't exist: {path}") 
+            exit(1)
+
 
     def symlink(self, src: str, dst: str):
         try:
             os.symlink(src, dst)
-        except: 
+
+        except PermissionError: 
             Command(f"sudo ln -sf {src} {dst}", capture_output=self.quiet).execute()
 
+        except FileExistsError:
+            prRed(f"Failed to symlink, file already exists: {dst}.")
+            exit(1)
+
+        except Error as e:
+            prRed(f"Error while symlinking '{src + " to " + dst}':\n{e}")
+            exit(1)
+
+    def cp(self, src: str, dst: str):
+        try:
+            Command(f"sudo cp -r {src} {dst}").execute()
+        except Error as e:
+            prRed(f"Error while copying '{src}' to '{dst}':\n{e}")
+            exit(1)
 

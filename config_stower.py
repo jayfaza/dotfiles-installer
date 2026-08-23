@@ -57,11 +57,12 @@ class ConfigStower:
 
     def stow_tlp(self):
         prYellow("Stowing tlp config...")
-        self.sysman.symlink(self.tlp_config, self.tlp_default)
+        self.sysman.rmfile(self.tlp_default)
+        self.sysman.cp(self.tlp_config, self.tlp_default)
 
     def stow_all(self):
         prCyan("Stowing .config configs...")
-        Command("stow .", self.quiet).execute()
+        Command("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md", self.quiet).execute()
         
 
 
