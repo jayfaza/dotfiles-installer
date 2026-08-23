@@ -86,7 +86,6 @@ class ConfigStower:
         time.sleep(2)
         process.kill()
 
-        self.sysman.cd(firefox_dir)
         firefox_entry = os.listdir(firefox_dir)
 
         firefox_config = None 
