@@ -21,7 +21,7 @@ class Command:
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
         if proc.returncode == 1:
-            warning(f"Process breaked down: {proc.stdout}")
+            warning(f"Process breaked down: {proc}")
         else:
             return
 
