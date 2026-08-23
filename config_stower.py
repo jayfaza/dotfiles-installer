@@ -1,5 +1,6 @@
 from logging import error
 from os.path import expanduser
+import subprocess
 
 from command import Command
 from system_manager import SystemManager
@@ -55,7 +56,11 @@ class ConfigStower:
         self.sysman.symlink(self.tlp_config, self.tlp_default)
 
     def stow_all(self):
-        Command("stow .").execute()
+        output = subprocess.run(["stow ."]).stderr.decode()
+
+        print(f"Stowing ouput: {output}")
+
+        # Command("stow .").execute()
         
 
 
