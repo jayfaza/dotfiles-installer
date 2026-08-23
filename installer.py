@@ -26,8 +26,6 @@ class Installer:
 
         prGreen(f"\nEverything has been updated!")
 
-        self.reload_fish()
-
     def install(self):
         if self.update:
             self.update_everything()
@@ -43,7 +41,6 @@ class Installer:
         self.tweaker.tweak_all()
 
         prGreen(f"\nEverything has been prepared and installed.\n Welcome back!")
-        self.reload_fish()
         
     def install_dotfiles(self):
         prCyan("Downloading jayfaza's dotfiles...")
