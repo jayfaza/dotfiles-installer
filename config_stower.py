@@ -22,8 +22,8 @@ class ConfigStower:
         self.tlp_config: str = f"{self.home}/dotfiles/.config/tlp/tlp.conf"
         self.xdg_default: str = "/etc/xdg/user-dirs.conf"
         self.xdg_config: str = f"{self.home}/dotfiles/.config/xdg/user-dirs.conf"
-        self.firefox_default: str = self.define_firefox_profile()
         self.firefox_config: str = f"{self.home}/dotfiles/.config/firefox/prefs.js"
+        self.firefox_default: str
 
     def stow(self):
         self.stow_prepare()
@@ -51,6 +51,8 @@ class ConfigStower:
 
         if os.path.exists(self.grub_default):
             self.sysman.rmfile(self.grub_default)
+
+        self.firefox_default = self.define_firefox_profile()
 
     def stow_grub(self):
         prYellow("Stowing grub config")
