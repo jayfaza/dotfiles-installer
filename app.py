@@ -18,7 +18,7 @@ class App:
         if config.update:
             config.setup_type = "desktop"
             Installer(config).update_all()
-            sys.exit(0)
+            exit(0)
 
 
         if args.default:
@@ -28,6 +28,6 @@ class App:
 
 
         Installer(config).install()
-        sys.exit(0)
+        exit(0)
 
 
