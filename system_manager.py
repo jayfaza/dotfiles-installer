@@ -52,9 +52,7 @@ class SystemManager:
     def symlink(self, src: str, dst: str):
         try:
             os.symlink(src, dst)
-        except PermissionError:
+        except: 
             Command(f"sudo ln -s {src} {dst}").execute()
-        except:
-            error(f"Failed to create symlink: {src} to {dst}")
 
 
