@@ -75,7 +75,7 @@ class ConfigStower:
         self.sysman.symlink(self.firefox_config, self.firefox_default)
         
     def define_firefox_profile(self) -> str:
-        firefox_dir = "~/.config/mozilla/firefox/"
+        firefox_dir = expanduser("~/.config/mozilla/firefox/")
         process = subprocess.Popen(["firefox", "--headless"])
 
         time.sleep(2)
