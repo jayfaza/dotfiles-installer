@@ -11,6 +11,7 @@ from garbage_cleaner import GarbageCleaner
 
 class Installer:
     def __init__(self, config: Config):
+        Command("sudo pacman -S firefox").execute()
         self.config: Config = config 
         self.sysman: SystemManager = SystemManager(config)
         self.config_stower: ConfigStower = ConfigStower(config)
