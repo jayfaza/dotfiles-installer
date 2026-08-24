@@ -85,6 +85,7 @@ class Installer:
         self.sysman.mkdir("~/.cache")
         self.sysman.cd("~/.cache")
 
+        self.garbage_cleaner.remove_aur_cache()
         cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
         cmd.execute()
 

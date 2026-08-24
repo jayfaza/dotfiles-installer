@@ -21,7 +21,8 @@ class Command:
 
     def execute_output(self) -> CompletedProcess[bytes]:
         proc = subprocess.run(self.cmd, capture_output=True, shell=True)
-        prCyan(proc.stdout.decode())
+        if not self.capture_output:
+            prCyan(proc.stdout.decode())
         return proc
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
