@@ -81,11 +81,15 @@ class Installer:
 
     def install_aur(self):
         prYellow(f"Installing AUR: {self.config.aur}")
+        
+        cache = expanduser("~/.cache")
+        self.sysman.mkdir(cache)
+        self.sysman.cd(cache)
+        aur = f"{cache}/{self.config.aur}"
 
-        self.sysman.mkdir("~/.cache")
-        self.sysman.cd("~/.cache")
+        if os.path.exists(aur):
+            self.sysman.rmdir(aur)
 
-        self.garbage_cleaner.remove_aur_cache()
         cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
         cmd.execute()
 
