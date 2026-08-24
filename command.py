@@ -20,9 +20,10 @@ class Command:
         self.unwrap(self.execute_output())
 
     def execute_output(self) -> CompletedProcess[bytes]:
-        proc = subprocess.run(self.cmd, capture_output=True, shell=True)
         if not self.capture_output:
-            prCyan(proc.stdout.decode())
+            proc = subprocess.run(self.cmd, stderr=subprocess.PIPE, shell=True)
+        else:
+            proc = subprocess.run(self.cmd, capture_output=True, shell=True)
         return proc
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
