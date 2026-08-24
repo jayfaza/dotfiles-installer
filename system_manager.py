@@ -10,7 +10,7 @@ from printer import prRed
 
 class SystemManager:
     def __init__(self, config: Config):
-        self.quiet: bool = config.quiet
+        self.config: Config = config
 
     def cd(self, path: str):
         path = expanduser(path)
@@ -35,7 +35,7 @@ class SystemManager:
             try:
                 shutil.rmtree(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
 
             except Error as e:
                 prRed(f"Error while removing dir '{path}':\n{e}")
@@ -51,8 +51,8 @@ class SystemManager:
                 shutil.rmtree(path)
                 os.mkdir(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
-                Command(f"sudo mkdir {path}", capture_output=self.quiet).execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
+                Command(f"sudo mkdir {path}", capture_output=self.config.quiet).execute()
             except Error as e:
                 prRed(f"Error while clearing dir '{path}':\n{e}")
                 exit(1)
@@ -66,7 +66,7 @@ class SystemManager:
             try:
                 os.remove(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.quiet).execute()
+                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
             except Error as e:
                 prRed(f"Error while removing file '{path}':\n{e}")
         else:
@@ -79,7 +79,7 @@ class SystemManager:
             try:
                 os.unlink(path)
             except PermissionError:
-                Command(f"sudo unlink {path}", capture_output=self.quiet).execute()
+                Command(f"sudo unlink {path}", capture_output=self.config.quiet).execute()
             except Error as e:
                 prRed(f"Error while unlinking '{path}':\n{e}")
                 exit(1)
@@ -90,7 +90,7 @@ class SystemManager:
 
     def symlink(self, src: str, dst: str, force=False):
         try:
-            Command(f"sudo ln -sf {src} {dst}", capture_output=self.quiet).execute()
+            Command(f"sudo ln -sf {src} {dst}", capture_output=self.config.quiet).execute()
 
         except FileExistsError:
             prRed(f"Failed to symlink, file already exists: {dst}.")

@@ -8,7 +8,7 @@ from system_manager import SystemManager
 class GarbageCleaner:
     def __init__(self, config: Config):
         self.sysman: SystemManager = SystemManager(config)
-        self.setup: str = config.setup_type
+        self.config: Config = config 
         home = expanduser("~")
         self.aur_cache_dir: str = f"{home}/.cache/"
         self.archinstall_conf: str = f"{home}/user_configuration.json"
