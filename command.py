@@ -3,7 +3,7 @@ from logging import error
 from subprocess import CompletedProcess
 from typing import Self
 
-from printer import prRed
+from printer import prCyan, prRed
 
 
 class Command:
@@ -20,7 +20,9 @@ class Command:
         self.unwrap(self.execute_output())
 
     def execute_output(self) -> CompletedProcess[bytes]:
-        return subprocess.run(self.cmd, capture_output=self.capture_output, shell=True)
+        proc = subprocess.run(self.cmd, capture_output=True, shell=True)
+        prCyan(proc.stdout.decode())
+        return proc
 
     def unwrap(self, proc: CompletedProcess[bytes]) -> None:
         if proc.returncode == 0:
