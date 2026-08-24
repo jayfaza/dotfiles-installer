@@ -87,7 +87,7 @@ class ConfigStower:
 
     def stow_configs(self):
         prCyan("Stowing .config configs...")
-        Command("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md", self.conf.quiet).execute()
+        Command("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md --ignore dotfiles_configs", self.conf.quiet).execute()
 
 
     def stow_firefox_settings(self):
