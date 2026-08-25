@@ -1,0 +1,144 @@
+import os
+
+from os.path import expanduser
+from ..utils.printer import prCyan, prGreen, prYellow
+from ..managers.system_manager import SystemManager
+from ..managers.config import Config 
+from ..utils.command import Command
+from ..managers.config_stower import ConfigStower
+from ..managers.tweaker import Tweaker
+from ..managers.garbage_cleaner import GarbageCleaner
+
+class Installer:
+    def __init__(self, config: Config):
+        self.config: Config = config 
+        self.sysman: SystemManager = SystemManager(config)
+        self.config_stower: ConfigStower = ConfigStower(config)
+        self.tweaker: Tweaker = Tweaker(config)
+        self.garbage_cleaner: GarbageCleaner = GarbageCleaner(config)
+
+    def update_everything(self):
+        self.update_packages()
+        self.install_dotfiles()
+        self.config_stower.stow_all()
+        self.garbage_cleaner.clear_garbage()
+
+        prGreen(f"\nEverything has been updated!")
+
+    def install(self):
+        if self.config.update:
+            self.update_everything()
+            return
+
+        self.install_deps()
+        if self.is_some_aur():
+            self.install_aur_deps()
+            self.install_aur() 
+            self.install_cursor_theme()
+            if self.config.setup_type == "desktop":
+                self.install_caelestia()
+
+        self.install_dotfiles()
+        self.config_stower.stow_all()
+        self.garbage_cleaner.clear_garbage()
+        self.tweaker.tweak_all()
+
+        prGreen(f"\nEverything has been prepared and installed.\n Welcome back!")
+        
+    def install_dotfiles(self):
+        prCyan("Downloading jayfaza's dotfiles...")
+        if os.path.exists(expanduser("~/dotfiles")):
+
+            prYellow("~/dotfiles repository already exists!")
+            prYellow("Updating dotfiles repository...")
+            self.update_dotfiles()
+            self.sysman.cd("~/dotfiles")
+            return
+
+
+        self.sysman.cd("~")
+
+        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.config.quiet).execute()
+
+    def install_cursor_theme(self):
+        prCyan("Installing cursor theme...")
+        cmd = Command(f"{self.config.aur} -S bibata-cursor-theme-bin", capture_output=self.config.quiet)
+        if self.config.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        cmd.execute()
+
+    def install_deps(self):
+        prCyan(f"Installing dotfiles dependencies:\n\n{self.config.deps}\n")
+        deps_cmd = Command("sudo pacman -S", capture_output=self.config.quiet).expand_by(self.config.deps)
+        if self.config.setup_type == "laptop":
+            prYellow(f"Installing 'tlp' 'tlp-pd' packages for laptop setup...")
+            deps_cmd = deps_cmd.expand_by(["tlp", "tlp-pd"])
+
+        if self.config.quiet:
+            deps_cmd = deps_cmd.expand_by(["--noconfirm"])
+
+        deps_cmd.execute()
+
+    def install_aur(self):
+        prYellow(f"Installing AUR: {self.config.aur}")
+        
+        cache = expanduser("~/.cache")
+        self.sysman.mkdir(cache)
+        self.sysman.cd(cache)
+        aur = f"{cache}/{self.config.aur}"
+
+        if os.path.exists(aur):
+            self.sysman.rmdir(aur)
+
+        cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
+        cmd.execute()
+
+        self.sysman.cd(f"~/.cache/{self.config.aur}")
+
+        cmd = Command("makepkg -si", capture_output=self.config.quiet)
+        if self.config.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+
+        cmd.execute()
+
+    def install_aur_deps(self):
+        prCyan("Installing AUR dependencies...")
+        cmd = Command(f"sudo pacman -S --needed base-devel", capture_output=self.config.quiet)
+
+        if self.config.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+            
+        cmd.execute()
+
+    def is_some_aur(self) -> bool:
+        
+        if self.config.aur:
+            if self.config.aur == "paru" or self.config.aur == "yay":
+                return True
+            elif self.config.aur == "none":
+                return False
+            else:
+                return False
+        else:
+            return False
+
+    def update_packages(self):
+        prCyan("Updating packages...") 
+        cmd = Command("sudo pacman -Syu", capture_output=self.config.quiet)
+        if self.config.quiet:
+            cmd = cmd.expand_by(["--noconfirm"])
+        cmd.execute()
+
+    def update_dotfiles(self):
+        self.sysman.cd("~")
+        self.sysman.rmdir("~/dotfiles")
+        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.config.quiet).execute()
+
+    def install_caelestia(self):
+        prCyan(f"Installing caelestia...")
+        if not self.config.quiet:
+            Command(f"{self.config.aur} -S midnight-shell-git", capture_output=self.config.quiet).execute()
+        if self.config.quiet:
+            Command(f"{self.config.aur} -S midnight-shell-git --noconfirm", capture_output=self.config.quiet).execute()
+        
+
