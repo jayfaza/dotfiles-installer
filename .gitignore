@@ -63,7 +63,7 @@ target/
 *.zst
 dotfiles-installer-*/
 dotsmaster.egg-info
-pkg/
+pkg/dotfiles-installer/
 
 
 
