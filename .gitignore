@@ -1,5 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+__pycache__
+
 *.py[cod]
 *$py.class
 
@@ -64,6 +66,8 @@ target/
 dotfiles-installer-*/
 dotsmaster.egg-info
 pkg/dotfiles-installer/
+pkg/
+src/
 
 
 
