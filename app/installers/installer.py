@@ -134,7 +134,7 @@ class Installer:
 
     def update_dotfiles(self):
         self.sysman.cd("~")
-        self.sysman.rmdir("~/dotfiles")
+        self.sysman.clear_dir("~/dotfiles")
         self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
 
     def install_caelestia(self):
