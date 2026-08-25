@@ -86,7 +86,7 @@ class Config:
 
     def set_default_deps(self) -> None:
         self.deps_list = ["uwsm", "unzip", "which", "adw-gtk-theme", "swaybg", "nvim", "nvim", "nwg-look", "fuzzel", "lsd", "stow", "npm", "pipewire", "wireplumber", "rustup", "niri", "kitty", "nautilus", "firefox", "waybar", "mako", "fish", "xdg-desktop-portal", "xdg-desktop-portal-gnome", "xdg-desktop-portal-gtk", "gnome-keyring", "git"]
-        self.deps_str = ''.join(self.deps_list)
+        self.deps_str = ' '.join(self.deps_list)
 
     def choose_aur_man(self) -> None:
         if self.is_aur():
