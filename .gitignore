@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 __pycache__
+dotsmaster-1.0/
+dotsmaster-1.0
 
 *.py[cod]
 *$py.class
