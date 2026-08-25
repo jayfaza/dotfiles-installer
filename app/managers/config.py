@@ -22,6 +22,7 @@ class Config:
             return
 
         self.get_setup_type()
+        self.is_caelestia()
         self.set_default_deps()
         self.add_deps()
         self.choose_aur_man()
