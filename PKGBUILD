@@ -27,6 +27,4 @@ package() {
     python -m installer --destdir="$pkgdir" dist/*.whl
 }
 
-check() {
-  rm -rf $pkgname-$pkgver
-}
+

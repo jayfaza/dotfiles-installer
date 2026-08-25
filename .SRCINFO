@@ -1,0 +1,18 @@
+pkgbase = dotsmaster
+	pkgdesc = Jayfaza dotfiles installer
+	pkgver = 1.0
+	pkgrel = 1
+	url = https://github.com/jayfaza/dotfiles-installer
+	arch = x86_64
+	license = GPL3
+	makedepends = systemd
+	makedepends = git
+	makedepends = python
+	makedepends = python-pipx
+	makedepends = python-setuptools
+	depends = ncurses
+	depends = systemd-libs
+	source = dotsmaster-1.0::git+https://github.com/jayfaza/dotfiles-installer.git
+	sha256sums = SKIP
+
+pkgname = dotsmaster
