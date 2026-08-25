@@ -1,12 +1,13 @@
 from os.path import expanduser
 
-from ..utils.command import Command
+from ..utils.command import Command, Executor
 from ..managers.config import Config
 from ..utils.printer import prCyan, prGreen, prRed, prYellow
 
 class Tweaker:
     def __init__(self, config: Config):
         self.config: Config = config
+        self.execr: Executor = Executor(config)
 
     def tweak_all(self):
         self.tweak_audio()
@@ -19,58 +20,44 @@ class Tweaker:
 
         if self.config.setup_type == "laptop":
             self.tweak_tlp()
+        if self.config.caelestia:
+            self.tweak_uwsm()
 
     def tweak_audio(self):
-        output = Command("systemctl --user is-enabled pipewire", capture_output=True).execute_output().stdout.decode()
-        if output == "disabled":
-            prYellow("Turning on pipewire servers...")
-            Command("sudo systemctl enable --now pipewire wireplumber", capture_output=self.config.quiet).execute()
-        else:
-            prGreen("Pipewire is enabled, skip...")
-            pass
+        self.execr.execute("systemctl --user is-enabled pipewire")
+        prYellow("Turning on pipewire servers...")
+        self.execr.execute("sudo systemctl enable --now pipewire wireplumber")
 
     def tweak_xdg_portal(self):
-        output = Command("systemctl --user is-enabled xdg-desktop-portal", capture_output=True).execute_output().stdout.decode()
+        self.execr.execute("systemctl --user is-enabled xdg-desktop-portal")
         
-        if output == "disabled":
-            prYellow("Turninig on xdg-desktop-portal...")
-            Command("sudo systemctl enable --now xdg-desktop-portal", capture_output=self.config.quiet).execute()
-        else:
-            prGreen("xdg-desktop-portal is enabled, skip...")
-            pass
+        prYellow("Turninig on xdg-desktop-portal...")
+        self.execr.execute("sudo systemctl enable --now xdg-desktop-portal")
 
     def tweak_dm(self):
-        output = Command("systemctl --user is-enabled sddm", capture_output=True).execute_output().stdout.decode()
+        self.execr.execute("systemctl --user is-enabled sddm")
 
-        if output == "enabled":
-            prYellow("Disabling sddm...")
-            Command("sudo systemctl disable --now sddm", capture_output=self.config.quiet).execute()
-        else:
-            prGreen("Sddm is disabled, skip...")
-            pass
+        prYellow("Disabling sddm...")
+        self.execr.execute("sudo systemctl disable --now sddm")
 
     def tweak_rust(self):
         prCyan("Installing rust components...")
-        Command("rustup update stable", capture_output=self.config.quiet).execute()
-        Command("rustup component add rustfmt rust-analyzer", capture_output=self.config.quiet).execute()
+        self.execr.execute("rustup update stable")
+        self.execr.execute("rustup component add rustfmt rust-analyzer")
 
     def tweak_grub(self):
         prYellow("Updating grub config...")
-        Command("sudo grub-mkconfig -o /boot/grub/grub.cfg", capture_output=self.config.quiet).execute()
+        self.execr.execute("sudo grub-mkconfig -o /boot/grub/grub.cfg")
 
     def tweak_theme_mode(self):
         prCyan("Setting up theme mode...")
-        Command("gsettings set org.gnome.desktop.interface color-scheme prefer-dark", capture_output=self.config.quiet).execute()
+        self.execr.execute("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
 
     def tweak_tlp(self):
-        output = Command("systemctl --user is-enabled tlp", capture_output=True).execute_output().stdout.decode()
+        self.execr.execute("systemctl --user is-enabled tlp")
 
-        if output == "disabled":
-            prYellow("Enabling tlp...")
-            Command("sudo systemctl enable --now tlp tlp-pd").execute()
-        else:
-            prGreen("Tlp is enabled, skip...")
-            pass
+        prYellow("Enabling tlp...")
+        self.execr.execute("sudo systemctl enable --now tlp tlp-pd")
 
     def tweak_shell_configs(self):
         home = expanduser("~")
@@ -90,3 +77,16 @@ class Tweaker:
         except:
             prRed("Failed to create dotfiles-configs.")
             exit(1)
+
+    def tweak_uwsm(self):
+        home = expanduser("~")
+        configs = f"{home}/dotfiles/dotfiles_configs"
+        vm = f"{configs}/vm"
+        try:
+            with open(vm, "w") as f:
+                f.write("uwsm app -- start-hyprland")
+                f.close()
+        except:
+            prRed("Failed to tweak uwsm")
+            exit(1)
+

@@ -4,7 +4,7 @@ from os.path import expanduser
 from ..utils.printer import prCyan, prGreen, prYellow
 from ..managers.system_manager import SystemManager
 from ..managers.config import Config 
-from ..utils.command import Command
+from ..utils.command import Command, Executor
 from ..managers.config_stower import ConfigStower
 from ..managers.tweaker import Tweaker
 from ..managers.garbage_cleaner import GarbageCleaner
@@ -13,6 +13,7 @@ class Installer:
     def __init__(self, config: Config):
         self.config: Config = config 
         self.sysman: SystemManager = SystemManager(config)
+        self.execr: Executor = Executor(config)
         self.config_stower: ConfigStower = ConfigStower(config)
         self.tweaker: Tweaker = Tweaker(config)
         self.garbage_cleaner: GarbageCleaner = GarbageCleaner(config)
@@ -35,7 +36,7 @@ class Installer:
             self.install_aur_deps()
             self.install_aur() 
             self.install_cursor_theme()
-            if self.config.setup_type == "desktop":
+            if self.config.caelestia:
                 self.install_caelestia()
 
         self.install_dotfiles()
@@ -58,26 +59,28 @@ class Installer:
 
         self.sysman.cd("~")
 
-        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.config.quiet).execute()
+        self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
 
     def install_cursor_theme(self):
         prCyan("Installing cursor theme...")
-        cmd = Command(f"{self.config.aur} -S bibata-cursor-theme-bin", capture_output=self.config.quiet)
         if self.config.quiet:
-            cmd = cmd.expand_by(["--noconfirm"])
-        cmd.execute()
+            self.execr.execute(f"{self.config.aur} -S bibata-cursor-theme-bin --noconfirm")
+        else: 
+            self.execr.execute(f"{self.config.aur} -S bibata-cursor-theme-bin")
 
     def install_deps(self):
-        prCyan(f"Installing dotfiles dependencies:\n\n{self.config.deps}\n")
-        deps_cmd = Command("sudo pacman -S", capture_output=self.config.quiet).expand_by(self.config.deps)
-        if self.config.setup_type == "laptop":
-            prYellow(f"Installing 'tlp' 'tlp-pd' packages for laptop setup...")
-            deps_cmd = deps_cmd.expand_by(["tlp", "tlp-pd"])
+        prCyan(f"Installing dotfiles dependencies:\n\n{self.config.deps_list}\n")
 
         if self.config.quiet:
-            deps_cmd = deps_cmd.expand_by(["--noconfirm"])
+            self.execr.execute(f"sudo pacman -S {self.config.deps_str} --noconfirm")
+            if self.config.setup_type == "laptop":
+                self.execr.execute("sudo pacman -S tlp tlp-pd --noconfirm")
+        else:
+            self.execr.execute(f"sudo pacman -S {self.config.deps_str}")
 
-        deps_cmd.execute()
+            if self.config.setup_type == "laptop":
+                self.execr.execute("sudo pacman -S tlp tlp-pd")
+
 
     def install_aur(self):
         prYellow(f"Installing AUR: {self.config.aur}")
@@ -90,25 +93,24 @@ class Installer:
         if os.path.exists(aur):
             self.sysman.rmdir(aur)
 
-        cmd = Command(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
-        cmd.execute()
+        self.execr.execute(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
 
         self.sysman.cd(f"~/.cache/{self.config.aur}")
 
-        cmd = Command("makepkg -si", capture_output=self.config.quiet)
         if self.config.quiet:
-            cmd = cmd.expand_by(["--noconfirm"])
+            self.execr.execute("makepkg -si --noconfirm")
+        else:
+            self.execr.execute("makepkg -si")
 
-        cmd.execute()
 
     def install_aur_deps(self):
         prCyan("Installing AUR dependencies...")
-        cmd = Command(f"sudo pacman -S --needed base-devel", capture_output=self.config.quiet)
+        self.execr.execute(f"sudo pacman -S --needed base-devel", capture_output=self.config.quiet)
 
         if self.config.quiet:
-            cmd = cmd.expand_by(["--noconfirm"])
-            
-        cmd.execute()
+            self.execr.execute(f"sudo pacman -S --needed base-devel --noconfirm")
+        else:
+            self.execr.execute(f"sudo pacman -S --needed base-devel")
 
     def is_some_aur(self) -> bool:
         
@@ -124,21 +126,22 @@ class Installer:
 
     def update_packages(self):
         prCyan("Updating packages...") 
-        cmd = Command("sudo pacman -Syu", capture_output=self.config.quiet)
         if self.config.quiet:
-            cmd = cmd.expand_by(["--noconfirm"])
-        cmd.execute()
+            self.execr.execute("sudo pacman -Syu --noconfirm")
+        else:
+            self.execr.execute("sudo pacman -Syu")
+
 
     def update_dotfiles(self):
         self.sysman.cd("~")
         self.sysman.rmdir("~/dotfiles")
-        Command("git clone https://github.com/jayfaza/dotfiles.git", capture_output=self.config.quiet).execute()
+        self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
 
     def install_caelestia(self):
         prCyan(f"Installing caelestia...")
         if not self.config.quiet:
-            Command(f"{self.config.aur} -S midnight-shell-git", capture_output=self.config.quiet).execute()
+            self.execr.execute(f"{self.config.aur} -S midnight-shell-git")
         if self.config.quiet:
-            Command(f"{self.config.aur} -S midnight-shell-git --noconfirm", capture_output=self.config.quiet).execute()
+            self.execr.execute(f"{self.config.aur} -S midnight-shell-git --noconfirm")
         
 

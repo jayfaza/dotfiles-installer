@@ -2,7 +2,7 @@ from csv import Error
 from logging import error
 import os
 from os.path import expanduser
-from ..utils.command import Command
+from ..utils.command import Command, Executor
 import shutil
 
 from ..managers.config import Config
@@ -11,6 +11,7 @@ from ..utils.printer import prRed
 class SystemManager:
     def __init__(self, config: Config):
         self.config: Config = config
+        self.execr: Executor = Executor(config)
 
     def cd(self, path: str):
         path = expanduser(path)
@@ -25,7 +26,7 @@ class SystemManager:
         try:
             os.makedirs(path, exist_ok=True)
         except PermissionError:
-            Command(f"sudo mkdir -p {path}").execute()
+            self.execr.execute(f"sudo mkdir -p {path}")
         except Error as e:
             prRed(f"Error while creating '{path}':\n{e}")
 
@@ -35,7 +36,7 @@ class SystemManager:
             try:
                 shutil.rmtree(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
+                self.execr.execute(f"sudo rm -rf {path}", capture_output=self.config.quiet)
 
             except Error as e:
                 prRed(f"Error while removing dir '{path}':\n{e}")
@@ -51,8 +52,8 @@ class SystemManager:
                 shutil.rmtree(path)
                 os.mkdir(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
-                Command(f"sudo mkdir {path}", capture_output=self.config.quiet).execute()
+                self.execr.execute(f"sudo rm -rf {path}", capture_output=self.config.quiet)
+                self.execr.execute(f"sudo mkdir {path}", capture_output=self.config.quiet)
             except Error as e:
                 prRed(f"Error while clearing dir '{path}':\n{e}")
                 exit(1)
@@ -66,7 +67,7 @@ class SystemManager:
             try:
                 os.remove(path)
             except PermissionError:
-                Command(f"sudo rm -rf {path}", capture_output=self.config.quiet).execute()
+                self.execr.execute(f"sudo rm -rf {path}", capture_output=self.config.quiet)
             except Error as e:
                 prRed(f"Error while removing file '{path}':\n{e}")
         else:
@@ -79,7 +80,7 @@ class SystemManager:
             try:
                 os.unlink(path)
             except PermissionError:
-                Command(f"sudo unlink {path}", capture_output=self.config.quiet).execute()
+                self.execr.execute(f"sudo unlink {path}", capture_output=self.config.quiet)
             except Error as e:
                 prRed(f"Error while unlinking '{path}':\n{e}")
                 exit(1)
@@ -90,7 +91,7 @@ class SystemManager:
 
     def symlink(self, src: str, dst: str, force=False):
         try:
-            Command(f"sudo ln -sf {src} {dst}", capture_output=self.config.quiet).execute()
+            self.execr.execute(f"sudo ln -sf {src} {dst}", capture_output=self.config.quiet)
 
         except FileExistsError:
             prRed(f"Failed to symlink, file already exists: {dst}.")
@@ -102,7 +103,7 @@ class SystemManager:
 
     def cp(self, src: str, dst: str):
         try:
-            Command(f"sudo cp -r {src} {dst}").execute()
+            self.execr.execute(f"sudo cp -r {src} {dst}")
         except Error as e:
             prRed(f"Error while copying '{src}' to '{dst}':\n{e}")
             exit(1)

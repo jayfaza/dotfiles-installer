@@ -2,7 +2,7 @@ from os.path import expanduser
 import subprocess
 import time
 
-from ..utils.command import Command
+from ..utils.command import Command, Executor
 from ..managers.config import Config
 from ..utils.printer import prCyan, prGreen, prRed, prYellow
 from ..managers.system_manager import SystemManager
@@ -11,6 +11,7 @@ import os
 class ConfigStower:
     def __init__(self, config: Config):
         self.sysman: SystemManager = SystemManager(config)
+        self.execr: Executor = Executor(config)
         self.conf: Config = config
         self.home: str = expanduser("~")
         self.bash_profile: str = f"{self.home}/.bash_profile"
@@ -40,7 +41,7 @@ class ConfigStower:
     def stow_prepare(self):
         self.sysman.cd(f"{self.home}/dotfiles/")
         
-        Command("systemctl --user stop --now xdg-desktop-portal").execute()
+        self.execr.execute("systemctl --user stop --now xdg-desktop-portal")
 
         if os.path.exists(self.config):
             self.sysman.clear_dir(self.config)
@@ -87,7 +88,7 @@ class ConfigStower:
 
     def stow_configs(self):
         prCyan("Stowing .config configs...")
-        Command("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md --ignore dotfiles_configs", self.conf.quiet).execute()
+        self.execr.execute("stow . --ignore=user_configuration.json --ignore=install.sh --ignore=README.md --ignore dotfiles_configs", self.conf.quiet)
 
 
     def stow_firefox_settings(self):

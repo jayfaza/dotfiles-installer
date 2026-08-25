@@ -12,7 +12,7 @@ arch=(x86_64)
 url="https://github.com/jayfaza/dotfiles-installer"
 license=('GPL3')
 depends=('ncurses' 'systemd-libs')
-makedepends=('systemd' 'git' 'python' 'python-pipx' 'python-setuptools')
+makedepends=('systemd' 'git' 'python' 'python-pipx' 'python-setuptools' 'python-build' 'python-installer')
 source=("${pkgname}-${pkgver}::git+https://github.com/jayfaza/dotfiles-installer.git")
 sha256sums=('SKIP')
 
