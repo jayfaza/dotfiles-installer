@@ -84,17 +84,15 @@ class Installer:
     def install_aur(self):
         prYellow(f"Installing AUR: {self.config.aur}")
         
-        cache = expanduser("~/.cache")
-        self.sysman.mkdir(cache)
-        self.sysman.cd(cache)
-        aur = f"{cache}/{self.config.aur}"
+        home = expanduser("~")
+        aur = f"{home}/{self.config.aur}"
 
         if os.path.exists(aur):
             self.sysman.rmdir(aur)
 
-        self.execr.execute(f"git clone https://aur.archlinux.org/{self.config.aur}.git", capture_output=self.config.quiet)
+        self.execr.execute(f"git clone https://aur.archlinux.org/{self.config.aur}.git")
 
-        self.sysman.cd(f"~/.cache/{self.config.aur}")
+        self.sysman.cd(f"{home}/{self.config.aur}")
 
         if self.config.quiet:
             self.execr.execute("makepkg -si --noconfirm")
