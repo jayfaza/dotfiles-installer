@@ -14,7 +14,6 @@ class Tweaker:
         self.tweak_xdg_portal()
         self.tweak_theme_mode()
         self.tweak_rust()
-        self.tweak_dm()
         self.tweak_grub()
 
         if self.config.setup_type == "laptop":
@@ -28,9 +27,6 @@ class Tweaker:
         prYellow("Turninig on xdg-desktop-portal...")
         self.execr.execute("systemctl --user enable --now xdg-desktop-portal")
 
-    def tweak_dm(self):
-        prYellow("Disabling sddm...")
-        self.execr.execute("sudo systemctl disable --now sddm")
 
     def tweak_rust(self):
         prCyan("Installing rust components...")
