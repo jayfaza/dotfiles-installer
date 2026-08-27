@@ -32,7 +32,6 @@ class ConfigStower:
         self.stow_grub()
         self.stow_xdg()
         self.stow_firefox_settings()
-        self.stow_firefox_extensions()
         self.stow_configs()
 
         if self.conf.setup_type == "laptop":
@@ -94,11 +93,6 @@ class ConfigStower:
     def stow_firefox_settings(self):
         prCyan(f"Stowing firefox...")
         self.sysman.symlink(self.firefox_dotfiles_config, self.firefox_default_config)
-
-    def stow_firefox_extensions(self):
-        prCyan(f"Stowing firefox extensions...")
-        self.sysman.symlink(self.firefox_dotfiles_extensions_config, f"{self.firefox_default_config}/extensions.json")
-        self.sysman.symlink(self.firefox_dotfiles_extensions_dir, f"{self.firefox_default_config}/extensions")
 
         
     def define_firefox_profile(self):

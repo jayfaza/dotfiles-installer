@@ -24,7 +24,7 @@ class SystemManager:
 
     def mkdir(self, path: str):
         path = expanduser(path)
-        self.execr.execute(f"sudo mkdir -p {path}")
+        self.execr.execute(f"mkdir -p {path}")
 
     def rmdir(self, path: str):
         path = expanduser(path)
@@ -38,7 +38,7 @@ class SystemManager:
         path = expanduser(path)
         if os.path.exists(path):
             self.execr.execute(f"sudo rm -rf {path}")
-            self.execr.execute(f"sudo mkdir {path}")
+            self.execr.execute(f"mkdir {path}")
         else:
             prRed(f"No directory: {path}")
             exit(1)
