@@ -118,7 +118,7 @@ class ConfigStower:
             exit(1)
 
     def generate_firefox_config(self):
-        process = subprocess.Popen(["firefox", "--headless"], stdout=subprocess.PIPE)
+        process = subprocess.Popen(["firefox", "--headless"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(2)
         process.kill()
 
