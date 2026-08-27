@@ -21,18 +21,18 @@ class Tweaker:
             self.tweak_tlp()
 
     def tweak_audio(self):
-        self.execr.execute("systemctl --user is-enabled pipewire")
+        self.execr.execute("systemctl --user is-enabled pipewire", capture_output=True)
         prYellow("Turning on pipewire servers...")
         self.execr.execute("sudo systemctl enable --now pipewire wireplumber")
 
     def tweak_xdg_portal(self):
-        self.execr.execute("systemctl --user is-enabled xdg-desktop-portal")
+        self.execr.execute("systemctl --user is-enabled xdg-desktop-portal", capture_output=True)
         
         prYellow("Turninig on xdg-desktop-portal...")
         self.execr.execute("sudo systemctl enable --now xdg-desktop-portal")
 
     def tweak_dm(self):
-        self.execr.execute("systemctl --user is-enabled sddm")
+        self.execr.execute("systemctl --user is-enabled sddm", capture_output=True)
 
         prYellow("Disabling sddm...")
         self.execr.execute("sudo systemctl disable --now sddm")
@@ -51,7 +51,7 @@ class Tweaker:
         self.execr.execute("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
 
     def tweak_tlp(self):
-        self.execr.execute("systemctl --user is-enabled tlp")
+        self.execr.execute("systemctl --user is-enabled tlp", capture_output=True)
 
         prYellow("Enabling tlp...")
         self.execr.execute("sudo systemctl enable --now tlp tlp-pd")
