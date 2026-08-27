@@ -13,7 +13,6 @@ class Config:
         self.update: bool = args.update
         self.default: bool = args.default
         self.install: bool = args.install
-        self.caelestia: bool
     
     def init(self) -> None:
         if self.default or self.update:
@@ -22,13 +21,11 @@ class Config:
             return
 
         self.get_setup_type()
-        self.is_caelestia()
         self.set_default_deps()
         self.add_deps()
         self.choose_aur_man()
 
     def init_default(self) -> None:
-        self.caelestia = False
         self.set_default_deps()
         self.aur = "yay"
 
@@ -55,7 +52,7 @@ class Config:
 
     def input_new_deps(self) -> None:
         try:
-            new_deps_list = input("Enter".format(bcolors.OKCYAN) + "deps".format(bcolors.WARNING) + "between spaces: ".format(bcolors.OKCYAN)).split()
+            new_deps_list = input("Enter" + "deps" + "between spaces: ").split()
             new_deps_str = ''.join(new_deps_list)
         except:
             prRed("Error whith dependencies adding.")
@@ -86,7 +83,7 @@ class Config:
             self.input_new_deps()
 
     def set_default_deps(self) -> None:
-        self.deps_list = ["uwsm", "unzip", "which", "adw-gtk-theme", "swaybg", "nvim", "nvim", "nwg-look", "fuzzel", "lsd", "stow", "npm", "pipewire", "wireplumber", "rustup", "niri", "kitty", "nautilus", "firefox", "waybar", "mako", "fish", "xdg-desktop-portal", "xdg-desktop-portal-gnome", "xdg-desktop-portal-gtk", "gnome-keyring", "git"]
+        self.deps_list = ["uwsm", "tree-sitter-cli", "unzip", "which", "adw-gtk-theme", "swaybg", "nvim", "nvim", "nwg-look", "fuzzel", "lsd", "stow", "npm", "pipewire", "wireplumber", "rustup", "niri", "kitty", "nautilus", "firefox", "waybar", "mako", "fish", "xdg-desktop-portal", "xdg-desktop-portal-gnome", "xdg-desktop-portal-gtk", "gnome-keyring", "git"]
         self.deps_str = " ".join(self.deps_list)
 
     def choose_aur_man(self) -> None:
@@ -117,18 +114,4 @@ class Config:
                 return False
             else:
                 continue
-
-    def is_caelestia(self):
-        while True:
-            caelestia = input(f"{bcolors.OKCYAN} Would you like to install caelestia-shell? [Y/n]: {bcolors.ENDC}").lower()
-            match caelestia:
-                case "y":
-                    self.caelestia = True
-                    break
-                case "n":
-                    self.caelestia = False
-                    break
-                case _:
-                    continue
-
 

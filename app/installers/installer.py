@@ -1,13 +1,14 @@
 import os
-
 from os.path import expanduser
-from ..utils.printer import prCyan, prGreen, prYellow
-from ..managers.system_manager import SystemManager
-from ..managers.config import Config 
-from ..utils.command import Command, Executor
+
+from ..managers.config import Config
 from ..managers.config_stower import ConfigStower
-from ..managers.tweaker import Tweaker
 from ..managers.garbage_cleaner import GarbageCleaner
+from ..managers.system_manager import SystemManager
+from ..managers.tweaker import Tweaker
+from ..utils.command import Executor
+from ..utils.printer import prCyan, prGreen, prYellow
+
 
 class Installer:
     def __init__(self, config: Config):
@@ -24,7 +25,7 @@ class Installer:
         self.config_stower.stow_all()
         self.garbage_cleaner.clear_garbage()
 
-        prGreen(f"\nEverything has been updated!")
+        prGreen("\nEverything has been updated!")
 
     def install(self):
         if self.config.update:
@@ -36,15 +37,13 @@ class Installer:
             self.install_aur_deps()
             self.install_aur() 
             self.install_cursor_theme()
-            if self.config.caelestia:
-                self.install_caelestia()
 
         self.install_dotfiles()
         self.config_stower.stow_all()
         self.garbage_cleaner.clear_garbage()
         self.tweaker.tweak_all()
 
-        prGreen(f"\nEverything has been prepared and installed.\n Welcome back!")
+        prGreen("\nEverything has been prepared and installed.\n Welcome back!")
         
     def install_dotfiles(self):
         prCyan("Downloading jayfaza's dotfiles...")
@@ -105,12 +104,12 @@ class Installer:
 
     def install_aur_deps(self):
         prCyan("Installing AUR dependencies...")
-        self.execr.execute(f"sudo pacman -S --needed base-devel", capture_output=self.config.quiet)
+        self.execr.execute("sudo pacman -S --needed base-devel", capture_output=self.config.quiet)
 
         if self.config.quiet:
-            self.execr.execute(f"sudo pacman -S --needed base-devel --noconfirm")
+            self.execr.execute("sudo pacman -S --needed base-devel --noconfirm")
         else:
-            self.execr.execute(f"sudo pacman -S --needed base-devel")
+            self.execr.execute("sudo pacman -S --needed base-devel")
 
     def is_some_aur(self) -> bool:
         
@@ -137,11 +136,5 @@ class Installer:
         self.sysman.rmdir("~/dotfiles")
         self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
 
-    def install_caelestia(self):
-        prCyan(f"Installing caelestia...")
-        if not self.config.quiet:
-            self.execr.execute(f"{self.config.aur} -S midnight-shell-git")
-        if self.config.quiet:
-            self.execr.execute(f"{self.config.aur} -S midnight-shell-git --noconfirm")
-        
+       
 

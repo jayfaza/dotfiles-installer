@@ -1,8 +1,8 @@
-from os.path import expanduser
 
-from ..utils.command import Command, Executor
 from ..managers.config import Config
-from ..utils.printer import prCyan, prGreen, prRed, prYellow
+from ..utils.command import Executor
+from ..utils.printer import prCyan, prYellow
+
 
 class Tweaker:
     def __init__(self, config: Config):
@@ -16,12 +16,9 @@ class Tweaker:
         self.tweak_rust()
         self.tweak_dm()
         self.tweak_grub()
-        self.tweak_shell_configs()
 
         if self.config.setup_type == "laptop":
             self.tweak_tlp()
-        if self.config.caelestia:
-            self.tweak_uwsm()
 
     def tweak_audio(self):
         self.execr.execute("systemctl --user is-enabled pipewire")
@@ -59,34 +56,5 @@ class Tweaker:
         prYellow("Enabling tlp...")
         self.execr.execute("sudo systemctl enable --now tlp tlp-pd")
 
-    def tweak_shell_configs(self):
-        home = expanduser("~")
-        configs = f"{home}/dotfiles/dotfiles_configs"
-        setup = f"{configs}/setup"
-        vm = f"{configs}/vm"
-        try:
-            with open(setup, "w") as f:
-                f.write(self.config.setup_type)
-                f.close()
-            with open(vm, "w") as f:
-                if self.config.setup_type == "desktop":
-                    f.write("start-hyprland")
-                if self.config.setup_type == "laptop":
-                    f.write("niri-session")
-                f.close()
-        except:
-            prRed("Failed to create dotfiles-configs.")
-            exit(1)
 
-    def tweak_uwsm(self):
-        home = expanduser("~")
-        configs = f"{home}/dotfiles/dotfiles_configs"
-        vm = f"{configs}/vm"
-        try:
-            with open(vm, "w") as f:
-                f.write("uwsm app -- start-hyprland")
-                f.close()
-        except:
-            prRed("Failed to tweak uwsm")
-            exit(1)
 
