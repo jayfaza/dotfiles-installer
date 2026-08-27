@@ -90,6 +90,8 @@ class Installer:
         if os.path.exists(aur):
             self.sysman.rmdir(aur)
 
+        self.sysman.cd(home)
+
         self.execr.execute(f"git clone https://aur.archlinux.org/{self.config.aur}.git")
 
         self.sysman.cd(f"{home}/{self.config.aur}")
