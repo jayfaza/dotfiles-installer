@@ -22,11 +22,11 @@ class Tweaker:
 
     def tweak_audio(self):
         prYellow("Turning on pipewire servers...")
-        self.execr.execute("sudo systemctl enable --now pipewire wireplumber")
+        self.execr.execute("systemctl --user enable --now pipewire wireplumber")
 
     def tweak_xdg_portal(self):
         prYellow("Turninig on xdg-desktop-portal...")
-        self.execr.execute("sudo systemctl enable --now xdg-desktop-portal")
+        self.execr.execute("systemctl --user enable --now xdg-desktop-portal")
 
     def tweak_dm(self):
         prYellow("Disabling sddm...")
