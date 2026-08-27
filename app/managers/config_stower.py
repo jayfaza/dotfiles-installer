@@ -92,7 +92,7 @@ class ConfigStower:
 
     def stow_firefox_settings(self):
         prCyan(f"Stowing firefox...")
-        self.sysman.symlink(self.firefox_dotfiles_config, self.firefox_default_config)
+        self.sysman.symlink(self.firefox_dotfiles_config, f"{self.firefox_default_config}/prefs.js")
 
         
     def define_firefox_profile(self):
