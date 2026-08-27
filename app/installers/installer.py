@@ -24,6 +24,7 @@ class Installer:
         self.install_dotfiles()
         self.config_stower.stow_all()
         self.garbage_cleaner.clear_garbage()
+        self.tweaker.tweak_all()
 
         prGreen("\nEverything has been updated!")
 
