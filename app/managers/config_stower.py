@@ -74,6 +74,7 @@ class ConfigStower:
     def stow_grub(self):
         prYellow("Stowing grub config")
         self.sysman.symlink(self.grub_config, self.grub_default)
+        self.execr.execute("sudo cp -r ~/dotfiles/.config/grub/themes/sayonara /boot/grub/themes/")
 
     def stow_xdg(self):
         prCyan("Stowing xdg config...")
