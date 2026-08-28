@@ -14,6 +14,7 @@ class Config:
         self.default: bool = args.default
         self.install: bool = args.install
         self.push: bool = args.push
+        self.sync: bool = args.sync
     
     def init(self) -> None:
         if self.default or self.update:

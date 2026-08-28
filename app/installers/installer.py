@@ -31,7 +31,11 @@ class Installer:
         self.execr.execute("git push -u origin main")
 
     def update_configs(self):
-        self.update_dotfiles_repo()
+        if self.config.update:
+            self.update_dotfiles_repo()
+        if self.config.sync:
+            self.sync_dotfiles_repo()
+
         self.config_stower.stow_all()
         self.garbage_cleaner.clear_garbage()
         self.tweaker.tweak_all()
@@ -55,6 +59,22 @@ class Installer:
         self.execr.execute("git add .")
         self.execr.execute("git stash apply")
 
+    def sync_dotfiles_repo(self):
+        dots = expanduser("~/dotfiles")
+
+        if not os.path.exists(dots):
+            self.install_dotfiles()
+            self.sysman.cd(dots)
+            self.execr.execute("git remote remove origin")
+            self.execr.execute("git remote add origin git@github.com:jayfaza/dotfiles.git")
+
+        self.sysman.cd(dots)
+        self.execr.execute("git stash clear")
+        self.execr.execute("git fetch")
+        self.execr.execute("git stash save")
+        self.execr.execute("git merge origin/main")
+
+
     def install(self):
         if self.config.update:
             self.update_configs()
@@ -62,6 +82,10 @@ class Installer:
 
         if self.config.push:
             self.update_remote()
+            return
+
+        if self.config.sync:
+            self.update_configs()
             return
 
         self.install_deps()
