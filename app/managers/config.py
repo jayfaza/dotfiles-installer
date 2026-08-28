@@ -13,10 +13,15 @@ class Config:
         self.update: bool = args.update
         self.default: bool = args.default
         self.install: bool = args.install
+        self.push: bool = args.push
     
     def init(self) -> None:
         if self.default or self.update:
             self.get_setup_type()
+            self.init_default()
+            return
+
+        if self.push:
             self.init_default()
             return
 

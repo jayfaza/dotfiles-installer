@@ -42,10 +42,9 @@ class ConfigStower:
         
         self.execr.execute("systemctl --user stop --now xdg-desktop-portal")
 
-        if os.path.exists(self.config):
-            self.sysman.clear_dir(self.config)
-        else:
+        if not os.path.exists(self.config):
             self.sysman.mkdir(self.config)
+
 
         self.define_firefox_profile()
 

@@ -19,18 +19,49 @@ class Installer:
         self.tweaker: Tweaker = Tweaker(config)
         self.garbage_cleaner: GarbageCleaner = GarbageCleaner(config)
 
-    def update_everything(self):
-        self.update_packages()
-        self.install_dotfiles()
+    def update_remote(self):
+        dots = expanduser("~/dotfiles")
+
+        if not os.path.exists(dots):
+            self.install_dotfiles()
+
+        self.sysman.cd(dots)
+        self.execr.execute("git add .")
+        self.execr.execute("git commit -m Update")
+        self.execr.execute("git push -u origin main")
+
+    def update_configs(self):
+        self.update_dotfiles_repo()
         self.config_stower.stow_all()
         self.garbage_cleaner.clear_garbage()
         self.tweaker.tweak_all()
 
         prGreen("\nEverything has been updated!")
 
+    def update_dotfiles_repo(self):
+        dots = expanduser("~/dotfiles")
+
+        if not os.path.exists(dots):
+            self.install_dotfiles()
+            self.sysman.cd(dots)
+            self.execr.execute("git remote remove origin")
+            self.execr.execute("git remote add origin git@github.com:jayfaza/dotfiles.git")
+
+        self.sysman.cd(dots)
+        self.execr.execute("git fetch")         
+        self.execr.execute("git stash save")
+        self.execr.execute("git rebase origin/main")
+        self.execr.execute("git stash apply")
+        self.execr.execute("git add .")
+        self.execr.execute("git stash apply")
+
     def install(self):
         if self.config.update:
-            self.update_everything()
+            self.update_configs()
+            return
+
+        if self.config.push:
+            self.update_remote()
             return
 
         self.install_deps()
@@ -53,13 +84,15 @@ class Installer:
             prYellow("~/dotfiles repository already exists!")
             prYellow("Updating dotfiles repository...")
             self.update_dotfiles()
-            self.sysman.cd("~/dotfiles")
             return
 
 
         self.sysman.cd("~")
 
         self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
+        self.sysman.cd(expanduser("~/dotfiles"))
+        self.execr.execute("git remote remove origin")
+        self.execr.execute("git remote add origin git@github.com:jayfaza/dotfiles.git")
 
     def install_cursor_theme(self):
         prCyan("Installing cursor theme...")
