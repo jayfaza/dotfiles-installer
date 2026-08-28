@@ -87,8 +87,6 @@ class Installer:
             return
 
 
-        self.sysman.cd("~")
-
         self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
         self.sysman.cd(expanduser("~/dotfiles"))
         self.execr.execute("git remote remove origin")
