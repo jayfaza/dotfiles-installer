@@ -169,6 +169,4 @@ class Installer:
         self.sysman.cd("~")
         self.sysman.rmdir("~/dotfiles")
         self.execr.execute("git clone https://github.com/jayfaza/dotfiles.git")
-
        
-

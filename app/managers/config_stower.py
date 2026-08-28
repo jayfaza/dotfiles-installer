@@ -33,6 +33,7 @@ class ConfigStower:
         self.stow_xdg()
         self.stow_firefox_settings()
         self.stow_configs()
+        self.stow_scripts()
 
         if self.conf.setup_type == "laptop":
             self.stow_tlp()
@@ -63,12 +64,8 @@ class ConfigStower:
         if os.path.exists(f"{self.firefox_default_config}/prefs.js"):
             self.sysman.rmfile(f"{self.firefox_default_config}/prefs.js")
 
-        if os.path.exists(f"{self.firefox_default_config}/extensions/"):
-            self.sysman.rmdir(f"{self.firefox_default_config}/extensions/")
-
-        if os.path.exists(f"{self.firefox_default_config}/extensions.json"):
-            self.sysman.rmfile(f"{self.firefox_default_config}/extensions.json")
-            
+        if not os.path.exists(f"{self.home}/.local/bin"):
+            self.execr.execute(f"mkdir -p {self.home}/.local/bin")
 
     def stow_grub(self):
         prYellow("Stowing grub config")
@@ -122,6 +119,9 @@ class ConfigStower:
         time.sleep(2)
         process.kill()
 
+    def stow_scripts(self):
+        prCyan("Stowing scripts...")
+        self.execr.execute("cp -r ~/dotfiles/scripts/* ~/.local/bin/")
 
 
 
