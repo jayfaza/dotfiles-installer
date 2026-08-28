@@ -72,7 +72,7 @@ class Installer:
         self.execr.execute("git stash clear")
         self.execr.execute("git fetch")
         self.execr.execute("git stash save")
-        self.execr.execute("git merge origin/main")
+        self.execr.execute("git rebase origin/main")
 
 
     def install(self):
