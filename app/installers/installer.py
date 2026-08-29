@@ -32,15 +32,20 @@ class Installer:
 
     def update_configs(self):
         if self.config.update:
-            self.update_dotfiles_repo()
-        if self.config.sync:
-            self.sync_dotfiles_repo()
-
-        self.config_stower.stow_all()
-        self.garbage_cleaner.clear_garbage()
-        self.tweaker.tweak_all()
-
-        prGreen("\nEverything has been updated!")
+            if self.config.sync:
+                self.sync_dotfiles_repo()
+                self.config_stower.stow_all()
+                self.garbage_cleaner.clear_garbage()
+                self.tweaker.tweak_all()
+                prGreen("\nEverything has been updated!")
+                return
+            else:
+                self.update_dotfiles_repo()
+                self.config_stower.stow_all()
+                self.garbage_cleaner.clear_garbage()
+                self.tweaker.tweak_all()
+                prGreen("\nEverything has been updated!")
+                return
 
     def update_dotfiles_repo(self):
         dots = expanduser("~/dotfiles")
@@ -70,9 +75,9 @@ class Installer:
 
         self.sysman.cd(dots)
         self.execr.execute("git stash clear")
+        self.execr.execute("git stash")
         self.execr.execute("git fetch")
-        self.execr.execute("git stash save")
-        self.execr.execute("git rebase origin/main")
+        self.execr.execute("git merge")
 
 
     def install(self):
@@ -84,9 +89,6 @@ class Installer:
             self.update_remote()
             return
 
-        if self.config.sync:
-            self.update_configs()
-            return
 
         self.install_deps()
         if self.is_some_aur():
